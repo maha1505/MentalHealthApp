@@ -1,36 +1,25 @@
 import React, { useState } from 'react';
 import {
-    Box, Typography, Paper, IconButton, TextField, MenuItem,
-    Grid, Card, CardContent, Chip, Stack
+    Box, Typography, Paper, IconButton, TextField,
+    Grid, Card, CardContent, Stack
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import SearchIcon from '@mui/icons-material/Search';
 import { format } from 'date-fns';
 
-const MOOD_COLORS = {
-    Happy: 'success',
-    Calm: 'info',
-    Neutral: 'default',
-    Anxious: 'warning',
-    Sad: 'error'
-};
-
 export default function JournalList({ entries, onDelete, onEdit }) {
     const [search, setSearch] = useState('');
-    const [filterMood, setFilterMood] = useState('All');
 
     const filteredEntries = entries.filter(entry => {
-        const matchesSearch = entry.content.toLowerCase().includes(search.toLowerCase());
-        const matchesMood = filterMood === 'All' || entry.mood === filterMood;
-        return matchesSearch && matchesMood;
+        return entry.content.toLowerCase().includes(search.toLowerCase());
     });
 
     return (
         <Box>
             <Box sx={{ mb: 3 }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={7}>
+                    <Grid item xs={12}>
                         <TextField
                             fullWidth
                             placeholder="Search entries..."
@@ -42,27 +31,12 @@ export default function JournalList({ entries, onDelete, onEdit }) {
                             sx={{ bgcolor: 'white', borderRadius: 2 }}
                         />
                     </Grid>
-                    <Grid item xs={12} md={5}>
-                        <TextField
-                            select
-                            fullWidth
-                            label="Filter by Mood"
-                            value={filterMood}
-                            onChange={(e) => setFilterMood(e.target.value)}
-                            sx={{ bgcolor: 'white', borderRadius: 2 }}
-                        >
-                            <MenuItem value="All">All Moods</MenuItem>
-                            {['Happy', 'Calm', 'Neutral', 'Anxious', 'Sad'].map(m => (
-                                <MenuItem key={m} value={m}>{m}</MenuItem>
-                            ))}
-                        </TextField>
-                    </Grid>
                 </Grid>
             </Box>
 
             {filteredEntries.length === 0 ? (
                 <Paper sx={{ p: 4, textAlign: 'center', borderRadius: 4 }}>
-                    <Typography color="textSecondary">No entries found matching your criteria.</Typography>
+                    <Typography color="textSecondary">No entries found.</Typography>
                 </Paper>
             ) : (
                 <Stack spacing={2}>
@@ -82,15 +56,9 @@ export default function JournalList({ entries, onDelete, onEdit }) {
                                         </IconButton>
                                     </Box>
                                 </Box>
-                                <Typography variant="body1" sx={{ mb: 2, whiteSpace: 'pre-wrap' }}>
+                                <Typography variant="body1" sx={{ whiteSpace: 'pre-wrap' }}>
                                     {entry.content}
                                 </Typography>
-                                <Chip
-                                    label={entry.mood}
-                                    size="small"
-                                    color={MOOD_COLORS[entry.mood]}
-                                    sx={{ fontWeight: 600, borderRadius: 1.5 }}
-                                />
                             </CardContent>
                         </Card>
                     ))}
